@@ -1,11 +1,12 @@
 modLoader = "javafml"
 loaderVersion = "[1,)"
 license = "GPL-3.0"
-issueTrackerURL = "https://github.com/Matixowy06/ReplayMod/issues"
 
 [[mods]]
-modId = "replaymod_neoforge_template"
-version = "0.1.0-port-template"
-displayName = "ReplayMod NeoForge Port Template"
-description = "Temporary NeoForge port scaffold for ReplayMod. This is not yet a final game-ready port."
-logoFile = "icon.png"
+modId = "replaymod_neoforge_port"
+version = "0.1.0-port"
+displayName = "ReplayMod NeoForge Port"
+description = "Temporary NeoForge port scaffold for ReplayMod."
+
+[[mixins]]
+config = "replaymod.mixins.json"
