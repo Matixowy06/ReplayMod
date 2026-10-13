@@ -7,7 +7,7 @@ public class NeoForgeEntry {
     public static final String MOD_ID = "replaymod_neoforge_template";
 
     public NeoForgeEntry() {
-        // Placeholder entrypoint for the NeoForge port.
-        // Move ReplayMod bootstrap logic here after the build is stabilized.
+        // Temporary placeholder entrypoint.
+        // This is the exact point where ReplayMod bootstrap code will be moved during the port.
     }
 }

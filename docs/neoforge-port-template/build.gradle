@@ -15,11 +15,11 @@ java {
 }
 
 minecraft {
-    // IMPORTANT: align this to the exact target NeoForge/Minecraft version required for the final port.
-    // This template intentionally keeps the NeoForge port isolated from the live Fabric build.
+    // Targeted at NeoForge 26.2 / MC 1.21.2 compatibility.
     version = "1.21.2-20250113.1636"
     mappings channel: 'official', version: '1.21.2'
     copyIdeResources = true
+
     runs {
         client {
             client()
