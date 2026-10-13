@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.replaymod.neoforge.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "plugin": "com.replaymod.neoforge.mixin.ReplayModMixinPlugin",
+  "mixins": [
+    {
+      "name": "MixinMinecraft",
+      "config": "replaymod.mixins.json"
+    }
+  ]
+}
