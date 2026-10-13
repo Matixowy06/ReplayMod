@@ -50,26 +50,23 @@ public final class ReplayModNeoForgeClient {
 
     private static void handleCommonBootstrap(String moduleId) {
         switch (moduleId) {
-            case "core" -> {
-                ReplayModCoreBridge.bootstrapCommon();
-            }
-            case "recording" -> {
-                // TODO: port ReplayModRecording bootstrap after the core bridge is complete.
-            }
-            case "replay" -> {
-                // TODO: port ReplayModReplay common setup once the recording bootstrap is migrated.
-            }
+            case "core" -> ReplayModCoreBridge.bootstrapCommon();
+            case "recording" -> ReplayModRecordingBridge.bootstrapCommon();
+            case "replay" -> ReplayModReplayBridge.bootstrapCommon();
             case "render" -> {
                 // TODO: port ReplayModRender setup after replay initialization is available.
             }
             default -> {
-                // non-core phases are handled client-side
+                // non-core phases handled client-side
             }
         }
     }
 
     private static void handleClientBootstrap(String moduleId) {
         switch (moduleId) {
+            case "core" -> ReplayModCoreBridge.bootstrapClient();
+            case "recording" -> ReplayModRecordingBridge.bootstrapClient();
+            case "replay" -> ReplayModReplayBridge.bootstrapClient();
             case "simplepathing" -> {
                 // TODO: port ReplayModSimplePathing client setup and keybindings.
             }
@@ -83,7 +80,7 @@ public final class ReplayModNeoForgeClient {
                 // TODO: port ReplayModCompat compatibility layer.
             }
             default -> {
-                // core/common modules are already handled above
+                // core/common modules handled above
             }
         }
     }
