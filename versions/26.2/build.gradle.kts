@@ -16,7 +16,6 @@ minecraft {
     version = "1.21.11"
     mappings {
         channel = "official"
-        // TODO: move from Fabric/Yarn to NeoForge mappings if full port is needed.
     }
 }
 
@@ -34,6 +33,7 @@ dependencies {
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
+    options.release.set(21)
 }
 
 tasks.withType<Jar>().configureEach {

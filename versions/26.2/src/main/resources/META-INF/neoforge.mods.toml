@@ -1,0 +1,11 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+
+[[mods]]
+modId="replaymod"
+version="0.1.0"
+displayName="ReplayMod"
+description="NeoForge bootstrap for ReplayMod. Full Fabric-to-NeoForge porting is still in progress."
+authors="ReplayMod contributors"
+displayURL="https://www.replaymod.com/"
