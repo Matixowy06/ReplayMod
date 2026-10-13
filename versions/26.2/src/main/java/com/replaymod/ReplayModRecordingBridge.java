@@ -1,16 +1,35 @@
 package com.replaymod;
 
 public final class ReplayModRecordingBridge {
+    private static boolean commonBootstrapped;
+    private static boolean clientBootstrapped;
+
     private ReplayModRecordingBridge() {
     }
 
     public static void bootstrapCommon() {
-        // Fabric: ReplayModRecording is initialized as part of ReplayMod module registration.
-        // NeoForge: keep the startup sequence aligned and delegate the real migration here.
+        if (commonBootstrapped) {
+            return;
+        }
+
+        // Original ReplayModRecording responsibilities:
+        // - register recording settings
+        // - prepare connection event plumbing
+        // - keep this module directly after core and before replay
+        commonBootstrapped = true;
     }
 
     public static void bootstrapClient() {
-        // Fabric client setup: register packet handlers, GUI hooks and recording entrypoints.
-        // NeoForge: keep the bridge explicit and migrate the client startup here.
+        if (clientBootstrapped) {
+            return;
+        }
+
+        bootstrapCommon();
+
+        // Original ReplayModRecording.initClient() responsibilities:
+        // - ConnectionEventHandler initialization
+        // - GuiHandler registration
+        // - packet registration for local recording / restrictions channel
+        clientBootstrapped = true;
     }
 }
