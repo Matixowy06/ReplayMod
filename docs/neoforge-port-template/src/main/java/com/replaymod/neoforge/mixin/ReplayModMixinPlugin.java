@@ -11,7 +11,7 @@ import java.util.Set;
 public class ReplayModMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
-        // TODO: migrate ReplayMod's legacy Fabric mixin setup into NeoForge's loading model.
+        // NeoForge loads mixins through the Mixin plugin pipeline; keep the gate conservative during porting.
     }
 
     @Override
@@ -21,8 +21,8 @@ public class ReplayModMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        // Keep the mixin gate conservative until the port is fully validated under NeoForge.
-        return FMLLoader.getDist() != null;
+        return FMLLoader.getDist() != null && mixinClassName.contains("ReplayMod")
+            && (targetClassName == null || targetClassName.startsWith("net.minecraft") || targetClassName.startsWith("net.neoforged"));
     }
 
     @Override

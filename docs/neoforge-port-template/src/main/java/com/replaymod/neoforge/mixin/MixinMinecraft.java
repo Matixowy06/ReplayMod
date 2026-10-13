@@ -10,6 +10,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinMinecraft {
     @Inject(method = "runTick()V", at = @At("HEAD"))
     private void replaymod$beforeClientTick(CallbackInfo ci) {
-        // TODO: migrate ReplayMod client tick hooks from the old Fabric/Loom-based mixin setup.
+        ReplayModNeoForgeMixinBridge.beforeClientTick();
     }
 }
