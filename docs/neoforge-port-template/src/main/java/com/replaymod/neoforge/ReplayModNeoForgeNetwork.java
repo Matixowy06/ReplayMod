@@ -1,47 +1,65 @@
 package com.replaymod.neoforge;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.network.NetworkDirection;
 import net.neoforged.neoforge.network.NetworkRegistry;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.simple.SimpleChannel;
 
 import static com.replaymod.neoforge.NeoForgeEntry.MOD_ID;
 
-@EventBusSubscriber(modid = MOD_ID, bus = net.neoforged.bus.api.EventBus.MOD)
 public final class ReplayModNeoForgeNetwork {
     private static final String PROTOCOL_VERSION = "1";
-
+    private static final ResourceLocation CHANNEL_ID = ResourceLocation.fromNamespaceAndPath("replaymod", "main");
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-        ResourceLocation.fromNamespaceAndPath("replaymod", "main"),
+        CHANNEL_ID,
         () -> PROTOCOL_VERSION,
         PROTOCOL_VERSION::equals,
         PROTOCOL_VERSION::equals
     );
+
+    private static int packetId = 0;
 
     private ReplayModNeoForgeNetwork() {
     }
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        // TODO: migrate ReplayMod packet registration from the legacy Fabric/Loom networking stack.
-        // Planned migration:
-        // 1. define replay packets
-        // 2. register encoders/decoders
-        // 3. bind client/server message handling
-        // 4. validate replay sync and recording state
+        registerPackets();
         NeoForgeEntry.LOG.info("NeoForge network scaffold initialized for ReplayMod port");
     }
 
-    public static void sendToServer(Object payload) {
-        // TODO: replace with actual ReplayMod packet dispatch.
+    public static void registerPackets() {
+        CHANNEL.messageBuilder(ReplayModNeoForgePacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
+            .decoder(ReplayModNeoForgePacket::decode)
+            .encoder(ReplayModNeoForgePacket::encode)
+            .consumerMainThread(ReplayModNeoForgePacket::handle)
+            .add();
+
+        CHANNEL.messageBuilder(ReplayModNeoForgePacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
+            .decoder(ReplayModNeoForgePacket::decode)
+            .encoder(ReplayModNeoForgePacket::encode)
+            .consumerMainThread(ReplayModNeoForgePacket::handle)
+            .add();
+    }
+
+    public static void sendToServer(ReplayModNeoForgePacket payload) {
         PacketDistributor.sendToServer(payload);
     }
 
-    public static void encodePayload(FriendlyByteBuf buffer, Object payload) {
-        // TODO: move ReplayMod packet serialization here.
+    public static void encodePayload(FriendlyByteBuf buffer, ReplayModNeoForgePacket payload) {
+        payload.encode(buffer);
+    }
+
+    public static ReplayModNeoForgePacket decodePayload(FriendlyByteBuf buffer) {
+        return ReplayModNeoForgePacket.decode(buffer);
+    }
+
+    public static FriendlyByteBuf newBuffer() {
+        return new FriendlyByteBuf(Unpooled.buffer());
     }
 }
