@@ -8,13 +8,12 @@ public final class ReplayModNeoForgeBootstrap {
     }
 
     public static void bootstrap(IEventBus modEventBus, ModContainer modContainer) {
-        // TODO: migrate ReplayMod startup sequence from the existing Fabric/Loom setup into NeoForge.
-        // Planned order:
         // 1. deferred registration
         // 2. mod lifecycle subscriptions
         // 3. client/server startup hooks
         // 4. replay system registration
         // 5. render/network migration
+        modEventBus.register(ReplayModNeoForgeNetwork.class);
         NeoForgeEntry.LOG.info("NeoForge bootstrap helper invoked for ReplayMod port scaffold");
     }
 }
