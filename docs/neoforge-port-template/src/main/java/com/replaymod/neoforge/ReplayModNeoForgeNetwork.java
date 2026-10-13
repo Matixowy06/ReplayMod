@@ -1,9 +1,9 @@
 package com.replaymod.neoforge;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.network.NetworkDirection;
 import net.neoforged.neoforge.network.NetworkRegistry;
@@ -12,6 +12,7 @@ import net.neoforged.neoforge.network.simple.SimpleChannel;
 
 import static com.replaymod.neoforge.NeoForgeEntry.MOD_ID;
 
+@EventBusSubscriber(modid = MOD_ID, bus = net.neoforged.bus.api.EventBus.MOD)
 public final class ReplayModNeoForgeNetwork {
     private static final String PROTOCOL_VERSION = "1";
     private static final ResourceLocation CHANNEL_ID = ResourceLocation.fromNamespaceAndPath("replaymod", "main");
@@ -37,29 +38,31 @@ public final class ReplayModNeoForgeNetwork {
         CHANNEL.messageBuilder(ReplayModNeoForgePacket.class, packetId++, NetworkDirection.PLAY_TO_CLIENT)
             .decoder(ReplayModNeoForgePacket::decode)
             .encoder(ReplayModNeoForgePacket::encode)
-            .consumerMainThread(ReplayModNeoForgePacket::handle)
+            .consumerMainThread((packet, context) -> {
+                context.setPacketHandled(true);
+                ReplayModNeoForgePacketHandler.handleClient(packet, context);
+            })
             .add();
 
         CHANNEL.messageBuilder(ReplayModNeoForgePacket.class, packetId++, NetworkDirection.PLAY_TO_SERVER)
             .decoder(ReplayModNeoForgePacket::decode)
             .encoder(ReplayModNeoForgePacket::encode)
-            .consumerMainThread(ReplayModNeoForgePacket::handle)
+            .consumerMainThread((packet, context) -> {
+                context.setPacketHandled(true);
+                ReplayModNeoForgePacketHandler.handleServer(packet, context);
+            })
             .add();
     }
 
-    public static void sendToServer(ReplayModNeoForgePacket payload) {
-        PacketDistributor.sendToServer(payload);
+    public static void sendToServer(ReplayModNeoForgePacket packet) {
+        PacketDistributor.sendToServer(packet);
     }
 
-    public static void encodePayload(FriendlyByteBuf buffer, ReplayModNeoForgePacket payload) {
-        payload.encode(buffer);
-    }
-
-    public static ReplayModNeoForgePacket decodePayload(FriendlyByteBuf buffer) {
-        return ReplayModNeoForgePacket.decode(buffer);
+    public static void sendToClient(Object player, ReplayModNeoForgePacket packet) {
+        PacketDistributor.sendToPlayer((net.minecraft.server.level.ServerPlayer) player, packet);
     }
 
     public static FriendlyByteBuf newBuffer() {
-        return new FriendlyByteBuf(Unpooled.buffer());
+        return new FriendlyByteBuf(io.netty.buffer.Unpooled.buffer());
     }
 }
