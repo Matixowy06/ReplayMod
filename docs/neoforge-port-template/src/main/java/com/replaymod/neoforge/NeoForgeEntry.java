@@ -1,5 +1,6 @@
 package com.replaymod.neoforge;
 
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -16,8 +17,11 @@ public class NeoForgeEntry {
         LOG.info("ReplayMod NeoForge scaffold bootstrapping...");
         LOG.info("Minecraft platform: {}", FMLLoader.getCurrentEnvironment().getDist());
 
-        // This is the exact point where platform-specific ReplayMod bootstrap logic should be moved.
-        // The existing Fabric/Loom logic must be re-implemented against NeoForge's event bus and lifecycle.
         ReplayModNeoForgeBootstrap.bootstrap(modEventBus, modContainer);
+
+        modEventBus.register(ReplayModNeoForgeModEvents.class);
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            modEventBus.register(ReplayModNeoForgeClientEvents.class);
+        }
     }
 }
