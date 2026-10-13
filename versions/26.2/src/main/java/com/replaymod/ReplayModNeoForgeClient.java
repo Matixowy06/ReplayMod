@@ -26,11 +26,13 @@ public final class ReplayModNeoForgeClient {
 
     @SubscribeEvent
     public static void onCommonSetup(FMLCommonSetupEvent event) {
+        ReplayModCoreBridge.bootstrapCommon();
         bootstrapModules("common");
     }
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        ReplayModCoreBridge.bootstrapClient();
         bootstrapModules("client");
     }
 
@@ -49,19 +51,19 @@ public final class ReplayModNeoForgeClient {
     private static void handleCommonBootstrap(String moduleId) {
         switch (moduleId) {
             case "core" -> {
-                // TODO: port ReplayMod core bootstrap and shared registries.
+                ReplayModCoreBridge.bootstrapCommon();
             }
             case "recording" -> {
-                // TODO: port ReplayModRecording startup and common networking hooks.
+                // TODO: port ReplayModRecording bootstrap after the core bridge is complete.
             }
             case "replay" -> {
-                // TODO: port ReplayModReplay startup and replay lifecycle events.
+                // TODO: port ReplayModReplay common setup once the recording bootstrap is migrated.
             }
             case "render" -> {
-                // TODO: port ReplayModRender init and render pipeline setup.
+                // TODO: port ReplayModRender setup after replay initialization is available.
             }
             default -> {
-                // non-core phases are handled in client bootstrap
+                // non-core phases are handled client-side
             }
         }
     }
@@ -81,7 +83,7 @@ public final class ReplayModNeoForgeClient {
                 // TODO: port ReplayModCompat compatibility layer.
             }
             default -> {
-                // core/common modules already handled above
+                // core/common modules are already handled above
             }
         }
     }
