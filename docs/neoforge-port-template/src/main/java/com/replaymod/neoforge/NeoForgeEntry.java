@@ -18,6 +18,7 @@ public class NeoForgeEntry {
         LOG.info("Minecraft platform: {}", FMLLoader.getCurrentEnvironment().getDist());
 
         ReplayModNeoForgeBootstrap.bootstrap(modEventBus, modContainer);
+        ReplayModNeoForgeRuntimeValidator.validateRuntime();
 
         modEventBus.register(ReplayModNeoForgeModEvents.class);
         if (FMLLoader.getDist() == Dist.CLIENT) {
