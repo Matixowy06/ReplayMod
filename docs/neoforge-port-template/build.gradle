@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'idea'
+    id 'net.neoforged.gradle.userdev' version '7.0.187'
+}
+
+version = '0.1.0-port-template'
+group = 'com.replaymod'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+minecraft {
+    // IMPORTANT: align this to the exact target NeoForge/Minecraft version required for the final port.
+    // This template intentionally keeps the NeoForge port isolated from the live Fabric build.
+    version = "1.21.2-20250113.1636"
+    mappings channel: 'official', version: '1.21.2'
+    copyIdeResources = true
+    runs {
+        client {
+            client()
+            ideConfigGenerated = true
+        }
+        server {
+            server()
+            ideConfigGenerated = true
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = uri("https://maven.neoforged.net/releases") }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${minecraft.version}"
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('jar') {
+    archiveBaseName = 'replaymod-neoforge-port-template'
+}
