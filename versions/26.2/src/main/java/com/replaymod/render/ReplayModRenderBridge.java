@@ -3,6 +3,10 @@ package com.replaymod.render;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ReplayModRenderBridge {
@@ -10,7 +14,18 @@ public final class ReplayModRenderBridge {
     private static final AtomicBoolean COMMON_BOOTSTRAPPED = new AtomicBoolean(false);
     private static final AtomicBoolean CLIENT_BOOTSTRAPPED = new AtomicBoolean(false);
 
+    public static final Path COMMON_RENDER_DIR = Paths.get("config", "replaymod", "render");
+    public static final Path CLIENT_RENDER_DIR = COMMON_RENDER_DIR.resolve("client");
+
     private ReplayModRenderBridge() {
+    }
+
+    public static Path getCommonRenderDir() {
+        return COMMON_RENDER_DIR;
+    }
+
+    public static Path getClientRenderDir() {
+        return CLIENT_RENDER_DIR;
     }
 
     public static void bootstrapCommon() {
@@ -22,15 +37,15 @@ public final class ReplayModRenderBridge {
         LOGGER.info("ReplayMod render: common bootstrap start");
 
         try {
-            initRenderContext();
+            prepareRenderStorage();
         } catch (Exception e) {
-            LOGGER.error("Failed to initialize render context", e);
+            LOGGER.error("Failed to prepare render storage", e);
         }
 
         try {
             loadRenderConfig();
         } catch (Exception e) {
-            LOGGER.error("Failed to load common render config", e);
+            LOGGER.error("Failed to load render common config", e);
         }
 
         try {
@@ -81,39 +96,49 @@ public final class ReplayModRenderBridge {
         LOGGER.info("ReplayMod render: client bootstrap finished");
     }
 
-    private static void initRenderContext() {
-        LOGGER.debug("initRenderContext() placeholder");
+    private static void prepareRenderStorage() throws IOException {
+        Files.createDirectories(COMMON_RENDER_DIR);
+        Files.createDirectories(CLIENT_RENDER_DIR);
+        LOGGER.debug("Prepared render directories: {} and {}", COMMON_RENDER_DIR, CLIENT_RENDER_DIR);
     }
 
-    private static void loadRenderConfig() {
-        LOGGER.debug("loadRenderConfig() placeholder");
+    private static void loadRenderConfig() throws IOException {
+        Path config = COMMON_RENDER_DIR.resolve("render.properties");
+        if (Files.notExists(config)) {
+            Files.writeString(config, "enabled=true\nquality=medium\n");
+        }
+        LOGGER.debug("Render common config ready at {}", config);
     }
 
     private static void registerRenderTypes() {
-        LOGGER.debug("registerRenderTypes() placeholder");
+        LOGGER.debug("registerRenderTypes() placeholder for render pipeline registration");
     }
 
     private static void initRenderServices() {
-        LOGGER.debug("initRenderServices() placeholder");
+        LOGGER.debug("initRenderServices() placeholder for pipeline manager and frame services");
     }
 
-    private static void loadClientRenderConfig() {
-        LOGGER.debug("loadClientRenderConfig() placeholder");
+    private static void loadClientRenderConfig() throws IOException {
+        Path config = CLIENT_RENDER_DIR.resolve("client-render.properties");
+        if (Files.notExists(config)) {
+            Files.writeString(config, "client.enabled=true\nwireframe=false\n");
+        }
+        LOGGER.debug("Client render config ready at {}", config);
     }
 
     private static void registerRenderKeybinds() {
-        LOGGER.debug("registerRenderKeybinds() placeholder");
+        LOGGER.debug("registerRenderKeybinds() placeholder for render shortcuts");
     }
 
     private static void registerRenderGui() {
-        LOGGER.debug("registerRenderGui() placeholder");
+        LOGGER.debug("registerRenderGui() placeholder for render settings UI");
     }
 
     private static void bindRenderHooks() {
-        LOGGER.debug("bindRenderHooks() placeholder");
+        LOGGER.debug("bindRenderHooks() placeholder for viewport/event render hooks");
     }
 
     private static void registerClientRenderEventHooks() {
-        LOGGER.debug("registerClientRenderEventHooks() placeholder");
+        LOGGER.debug("registerClientRenderEventHooks() placeholder for render lifecycle integration");
     }
 }
