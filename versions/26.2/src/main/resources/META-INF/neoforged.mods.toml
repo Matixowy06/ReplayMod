@@ -1,0 +1,10 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+
+[[mods]]
+modId = "replaymod"
+version = "0.1.0"
+displayName = "ReplayMod"
+description = "ReplayMod for NeoForge"
+authors = "ReplayMod Team"
