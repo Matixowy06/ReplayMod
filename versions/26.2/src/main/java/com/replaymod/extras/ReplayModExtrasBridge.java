@@ -3,6 +3,10 @@ package com.replaymod.extras;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ReplayModExtrasBridge {
@@ -10,7 +14,18 @@ public final class ReplayModExtrasBridge {
     private static final AtomicBoolean COMMON_BOOTSTRAPPED = new AtomicBoolean(false);
     private static final AtomicBoolean CLIENT_BOOTSTRAPPED = new AtomicBoolean(false);
 
+    public static final Path COMMON_EXTRAS_DIR = Paths.get("config", "replaymod", "extras");
+    public static final Path CLIENT_EXTRAS_DIR = COMMON_EXTRAS_DIR.resolve("client");
+
     private ReplayModExtrasBridge() {
+    }
+
+    public static Path getCommonExtrasDir() {
+        return COMMON_EXTRAS_DIR;
+    }
+
+    public static Path getClientExtrasDir() {
+        return CLIENT_EXTRAS_DIR;
     }
 
     public static void bootstrapCommon() {
@@ -22,15 +37,15 @@ public final class ReplayModExtrasBridge {
         LOGGER.info("ReplayMod extras: common bootstrap start");
 
         try {
-            initExtrasContext();
+            prepareExtrasStorage();
         } catch (Exception e) {
-            LOGGER.error("Failed to initialize extras context", e);
+            LOGGER.error("Failed to prepare extras storage", e);
         }
 
         try {
             loadExtrasConfig();
         } catch (Exception e) {
-            LOGGER.error("Failed to load common extras config", e);
+            LOGGER.error("Failed to load extras common config", e);
         }
 
         try {
@@ -81,39 +96,49 @@ public final class ReplayModExtrasBridge {
         LOGGER.info("ReplayMod extras: client bootstrap finished");
     }
 
-    private static void initExtrasContext() {
-        LOGGER.debug("initExtrasContext() placeholder");
+    private static void prepareExtrasStorage() throws IOException {
+        Files.createDirectories(COMMON_EXTRAS_DIR);
+        Files.createDirectories(CLIENT_EXTRAS_DIR);
+        LOGGER.debug("Prepared extras directories: {} and {}", COMMON_EXTRAS_DIR, CLIENT_EXTRAS_DIR);
     }
 
-    private static void loadExtrasConfig() {
-        LOGGER.debug("loadExtrasConfig() placeholder");
+    private static void loadExtrasConfig() throws IOException {
+        Path config = COMMON_EXTRAS_DIR.resolve("extras.properties");
+        if (Files.notExists(config)) {
+            Files.writeString(config, "enabled=true\nfeatures=basic\n");
+        }
+        LOGGER.debug("Extras common config ready at {}", config);
     }
 
     private static void registerExtrasTypes() {
-        LOGGER.debug("registerExtrasTypes() placeholder");
+        LOGGER.debug("registerExtrasTypes() placeholder for optional feature registrations");
     }
 
     private static void initExtrasServices() {
-        LOGGER.debug("initExtrasServices() placeholder");
+        LOGGER.debug("initExtrasServices() placeholder for optional feature services");
     }
 
-    private static void loadClientExtrasConfig() {
-        LOGGER.debug("loadClientExtrasConfig() placeholder");
+    private static void loadClientExtrasConfig() throws IOException {
+        Path config = CLIENT_EXTRAS_DIR.resolve("client-extras.properties");
+        if (Files.notExists(config)) {
+            Files.writeString(config, "client.enabled=true\nfeature.preview=false\n");
+        }
+        LOGGER.debug("Client extras config ready at {}", config);
     }
 
     private static void registerExtrasKeybinds() {
-        LOGGER.debug("registerExtrasKeybinds() placeholder");
+        LOGGER.debug("registerExtrasKeybinds() placeholder for optional keybinds");
     }
 
     private static void registerExtrasGui() {
-        LOGGER.debug("registerExtrasGui() placeholder");
+        LOGGER.debug("registerExtrasGui() placeholder for optional settings UI");
     }
 
     private static void bindExtrasRenderHooks() {
-        LOGGER.debug("bindExtrasRenderHooks() placeholder");
+        LOGGER.debug("bindExtrasRenderHooks() placeholder for optional preview hooks");
     }
 
     private static void registerClientExtrasEventHooks() {
-        LOGGER.debug("registerClientExtrasEventHooks() placeholder");
+        LOGGER.debug("registerClientExtrasEventHooks() placeholder for optional lifecycle hooks");
     }
 }
